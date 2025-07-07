@@ -88,7 +88,7 @@ function toggleProductSelection(product) {
   updateProductCardSelection();
 }
 
-/* Update product cards to include info icon and tooltip */
+/* Update product cards to include info icon with hover card */
 function displayProducts(products) {
   productsContainer.innerHTML = products
     .map(
@@ -121,36 +121,36 @@ function displayProducts(products) {
   const infoIcons = document.querySelectorAll(".info-icon");
   infoIcons.forEach((icon) => {
     icon.addEventListener("mouseover", (e) => {
-      showTooltip(e, icon.getAttribute("data-description"));
+      showDescriptionCard(e, icon.getAttribute("data-description"));
     });
-    icon.addEventListener("mouseout", hideTooltip);
+    icon.addEventListener("mouseout", hideDescriptionCard);
   });
 
   // Update the visual state of product cards
   updateProductCardSelection();
 }
 
-/* Show tooltip with product description */
-function showTooltip(event, description) {
-  // Create tooltip element
-  const tooltip = document.createElement("div");
-  tooltip.className = "custom-tooltip";
-  tooltip.textContent = description;
+/* Show a card with the product description */
+function showDescriptionCard(event, description) {
+  // Create the description card element
+  const descriptionCard = document.createElement("div");
+  descriptionCard.className = "description-card";
+  descriptionCard.textContent = description;
 
-  // Position tooltip near the hovered element
-  tooltip.style.position = "absolute";
-  tooltip.style.top = `${event.pageY + 10}px`;
-  tooltip.style.left = `${event.pageX + 10}px`;
+  // Position the card near the hovered icon
+  descriptionCard.style.position = "absolute";
+  descriptionCard.style.top = `${event.pageY + 10}px`;
+  descriptionCard.style.left = `${event.pageX + 10}px`;
 
-  // Add tooltip to the document
-  document.body.appendChild(tooltip);
+  // Add the card to the document
+  document.body.appendChild(descriptionCard);
 }
 
-/* Hide tooltip */
-function hideTooltip() {
-  const tooltip = document.querySelector(".custom-tooltip");
-  if (tooltip) {
-    tooltip.remove();
+/* Hide the description card */
+function hideDescriptionCard() {
+  const descriptionCard = document.querySelector(".description-card");
+  if (descriptionCard) {
+    descriptionCard.remove();
   }
 }
 

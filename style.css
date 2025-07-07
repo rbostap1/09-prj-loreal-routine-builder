@@ -239,48 +239,6 @@ body {
   color: #000; /* Darker color on hover */
 }
 
-/* Tooltip styling */
-.product-card .tooltip {
-  display: none; /* Hidden by default */
-  position: absolute;
-  top: 120%; /* Position below the info icon */
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-  color: #fff; /* White text for contrast */
-  padding: 8px 12px; /* Adjusted padding for better fit */
-  border-radius: 6px;
-  font-size: 12px; /* Smaller font size for compact appearance */
-  line-height: 1.4;
-  text-align: center;
-  z-index: 10;
-  width: 200px; /* Fixed width for consistent appearance */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  white-space: normal; /* Allow text to wrap */
-}
-
-.product-card .tooltip::after {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 6px;
-  border-style: solid;
-  border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing up */
-}
-
-/* Show tooltip on hover */
-.product-card .info-icon:hover + .tooltip,
-.product-card .info-icon:focus + .tooltip {
-  display: block; /* Show tooltip when hovering or focusing on the info icon */
-}
-
-/* Ensure the tooltip doesn't overflow the card */
-.product-card {
-  position: relative; /* Ensure the tooltip is positioned relative to the card */
-}
-
 /* visually hidden */
 .visually-hidden {
   position: absolute;
@@ -376,6 +334,48 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.generate-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  background: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.generate-btn:hover {
+  background: #666;
+}
+
+.generate-btn i {
+  margin-right: 8px;
+}
+
+/* Styling for the description card */
+.description-card {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 300px;
+  z-index: 1000;
+  white-space: normal;
+  word-wrap: break-word;
+}
+.description-card h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .generate-btn {
