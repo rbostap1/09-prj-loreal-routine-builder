@@ -410,6 +410,23 @@ body {
   margin-bottom: 8px;
 }
 
+/* Animation for chat bubbles */
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.chat-window .user-message,
+.chat-window .ai-message {
+  animation: slideIn 0.3s ease-out; /* Apply slide-in animation */
+}
+
 /* General RTL adjustments */
 .rtl {
   direction: rtl;

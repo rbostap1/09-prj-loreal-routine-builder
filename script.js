@@ -245,6 +245,11 @@ async function generateRoutine() {
   }
 }
 
+/* Scroll chat window to the latest message */
+function scrollToLatestMessage() {
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
 /* Handle routine generation button click */
 generateRoutineBtn.addEventListener("click", generateRoutine);
 
@@ -255,11 +260,17 @@ chatForm.addEventListener("submit", async (e) => {
   const userInput = document.getElementById("userInput").value.trim();
   if (!userInput) return;
 
-  // Display the user's message in a chat bubble
+  // Display the user's message in a chat bubble with animation
   chatWindow.innerHTML += `<p class="user-message">${userInput}</p>`;
 
   // Add the user's message to the conversation history
   conversationHistory.push({ role: "user", content: userInput });
+
+  // Reset the input field
+  document.getElementById("userInput").value = "";
+
+  // Scroll to the latest message
+  scrollToLatestMessage();
 
   // Create a prompt for the AI to include web search in its response
   const prompt = `Answer the user's question: "${userInput}". If relevant, search the web for L'Oréal products, routines, or related topics. Include any links or citations you find in the response. Format the response with HTML tags for bolding (<b>), underlining (<u>), hyperlinks (<a href="...">), and ensure the response is visually structured for better readability. End the response with a follow-up question to engage the user.`;
@@ -288,17 +299,18 @@ chatForm.addEventListener("submit", async (e) => {
       .map((line) => `<p>${line.trim()}</p>`)
       .join("");
 
-    // Display the AI's reply in a chat bubble
+    // Display the AI's reply in a chat bubble with animation
     chatWindow.innerHTML += `<div class="ai-message">${formattedReply}</div>`;
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Scroll to the latest message
+    scrollToLatestMessage();
 
     // Add the AI's reply to the conversation history
     conversationHistory.push({ role: "assistant", content: reply });
   } catch (error) {
     chatWindow.innerHTML += `<p class="ai-message">Failed to fetch a response. Please try again later.</p>`;
+    scrollToLatestMessage();
   }
-
-  chatForm.reset();
 });
 
 /* Filter and display products when category changes */
