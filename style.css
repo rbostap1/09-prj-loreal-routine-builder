@@ -6,9 +6,12 @@
 }
 
 /* —— body + fonts —— */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;500;700&display=swap");
+
 body {
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif; /* Neutral font for body text */
   color: #333;
+  background-color: #fff; /* White background for a clean look */
   display: flex;
   justify-content: center;
 }
@@ -31,9 +34,11 @@ body {
 }
 
 .site-title {
+  font-family: "Playfair Display", serif; /* Elegant font for headings */
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 700; /* Bold for emphasis */
   margin-bottom: 10px;
+  color: #000; /* Black text for the title */
 }
 
 /* category filter */
@@ -46,44 +51,50 @@ body {
   width: 100%;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #000;
+  border: 2px solid #000; /* Black border */
   border-radius: 8px;
   cursor: pointer;
-  background-color: white;
+  background-color: #fff; /* White background */
   font-weight: 500;
+  color: #333; /* Neutral text color */
+  font-family: "Montserrat", Arial, sans-serif; /* Consistent font for inputs */
 }
 
 .search-section select:focus {
   outline: none;
-  border-color: #666;
+  border-color: #d4af37; /* Gold border on focus */
 }
 
 .search-input {
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  border: 2px solid #000;
+  border: 2px solid #000; /* Black border */
   border-radius: 8px;
   margin-bottom: 20px;
-  font-family: "Montserrat", Arial, sans-serif;
+  font-family: "Montserrat", Arial, sans-serif; /* Consistent font for inputs */
+  color: #333; /* Neutral text color */
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #666;
+  border-color: #d4af37; /* Gold border on focus */
 }
 
 /* chat section */
 .chatbox {
   margin: 40px 0;
-  border: 2px solid #000;
+  border: 2px solid #000; /* Black border */
   border-radius: 8px;
   padding: 26px;
+  background-color: #f9f9f9; /* Light grey background */
 }
 
 .chatbox h2 {
+  font-family: "Playfair Display", serif; /* Elegant font for headings */
   font-size: 20px;
   margin-bottom: 20px;
+  color: #000; /* Black text */
 }
 
 .chat-window {
@@ -112,23 +123,18 @@ body {
 }
 
 .chat-window .user-message {
-  background-color: rgba(
-    173,
-    216,
-    230,
-    0.5
-  ); /* Light blue with 50% transparency */
-  color: #333; /* Dark text for readability */
-  border: 1px solid rgba(173, 216, 230, 0.8); /* Slightly darker border for definition */
+  background-color: #d4af37; /* Gold background for user messages */
+  color: #fff; /* White text for contrast */
+  border: 1px solid #b8860b; /* Slightly darker gold border */
   align-self: flex-end;
   text-align: right;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
 }
 
 .chat-window .ai-message {
-  background-color: rgba(128, 128, 128, 0.1); /* Grey with 10% transparency */
-  color: #000; /* Black text for contrast */
-  border: 1px solid rgba(128, 128, 128, 0.3); /* Slightly darker border for definition */
+  background-color: #f9f9f9; /* Light grey background for AI messages */
+  color: #333; /* Neutral text color */
+  border: 1px solid #ccc; /* Light grey border */
   align-self: flex-start;
   text-align: left;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
@@ -169,19 +175,20 @@ body {
   padding: 12px;
   font-size: 18px;
   border: none;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #000; /* Black underline */
   background: transparent;
+  color: #333; /* Neutral text color */
 }
 
 .chat-form input:focus {
   outline: none;
-  border-bottom-color: #000;
+  border-bottom-color: #d4af37; /* Gold underline on focus */
 }
 
 .chat-form button {
   font-size: 18px;
-  background: #000;
-  color: #fff;
+  background: #000; /* Black button */
+  color: #fff; /* White text */
   border: none;
   padding: 12px;
   width: 48px;
@@ -194,7 +201,7 @@ body {
 }
 
 .chat-form button:hover {
-  background: #666666;
+  background: #d4af37; /* Gold button on hover */
 }
 
 .chat-form button:focus {
@@ -204,8 +211,8 @@ body {
 
 /* Highlight selected product cards */
 .product-card.selected {
-  border: 2px solid #000;
-  background-color: #f0f0f0;
+  border: 2px solid #d4af37; /* Gold border for selected products */
+  background-color: #f9f9f9; /* Light grey background */
 }
 
 /* Product card hover overlay */
@@ -220,7 +227,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
   color: #fff; /* White text for contrast */
   display: flex;
   flex-direction: column;
@@ -273,6 +280,7 @@ body {
   text-align: center;
   font-size: 14px;
   color: #666;
+  font-family: "Montserrat", Arial, sans-serif; /* Neutral font for footer */
 }
 
 .site-footer nav {
@@ -281,12 +289,12 @@ body {
 
 .site-footer a {
   margin: 0 8px;
-  color: #000;
+  color: #000; /* Black links */
   text-decoration: none;
 }
 
 .site-footer a:hover {
-  color: #666666;
+  color: #d4af37; /* Gold links on hover */
 }
 
 /* products grid */
@@ -330,11 +338,13 @@ body {
 }
 
 .product-card h3 {
+  font-family: "Playfair Display", serif; /* Elegant font for product names */
   font-size: 16px;
   margin-bottom: 8px;
 }
 
 .product-card p {
+  font-family: "Montserrat", Arial, sans-serif; /* Neutral font for product details */
   font-size: 14px;
   color: #666;
 }
@@ -365,7 +375,7 @@ body {
   font-size: 18px;
   font-weight: 500;
   color: #fff;
-  background: #000;
+  background: #000; /* Black button */
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -373,7 +383,7 @@ body {
 }
 
 .generate-btn:hover {
-  background: #666;
+  background: #d4af37; /* Gold button on hover */
 }
 
 .generate-btn i {
@@ -382,10 +392,9 @@ body {
 
 /* Styling for the description card */
 .description-card {
-  background-color: #fff;
-  color: #333;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
+  background-color: #fff; /* White background */
+  color: #333; /* Neutral text color */
+  border: 1px solid #d4af37; /* Gold border */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 14px;
@@ -395,29 +404,36 @@ body {
   white-space: normal;
   word-wrap: break-word;
 }
+
 .description-card h3 {
   font-size: 16px;
   margin-bottom: 8px;
 }
 
-.generate-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 16px;
-  font-size: 18px;
-  font-weight: 500;
-  color: #fff;
-  background: #000;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+/* General RTL adjustments */
+.rtl {
+  direction: rtl;
 }
 
-.generate-btn:hover {
-  background: #666;
+.rtl .chat-window {
+  text-align: right;
 }
 
-.generate-btn i {
-  margin-right: 8px;
+.rtl .user-message {
+  align-self: flex-start; /* Flip alignment for user messages */
+  text-align: left;
+}
+
+.rtl .ai-message {
+  align-self: flex-end; /* Flip alignment for AI messages */
+  text-align: right;
+}
+
+.rtl .product-card {
+  text-align: right;
+}
+
+.rtl .product-card .info-icon {
+  margin-right: 8px; /* Adjust spacing for RTL */
+  margin-left: 0;
 }

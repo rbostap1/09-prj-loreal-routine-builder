@@ -368,8 +368,25 @@ searchInput.addEventListener("focus", async () => {
   }
 });
 
-/* Load user preferences on page load */
+/* Detect if the language is RTL and adjust the page direction */
+function applyRTLSupport() {
+  const rtlLanguages = ["ar", "he", "fa", "ur"]; // List of RTL languages
+  const userLang = navigator.language || navigator.userLanguage; // Get browser language
+  const htmlElement = document.documentElement;
+
+  // Check if the language is RTL
+  if (rtlLanguages.some((lang) => userLang.startsWith(lang))) {
+    htmlElement.setAttribute("dir", "rtl"); // Set direction to RTL
+    htmlElement.classList.add("rtl"); // Add a class for additional styling
+  } else {
+    htmlElement.setAttribute("dir", "ltr"); // Set direction to LTR
+    htmlElement.classList.remove("rtl"); // Remove RTL class if present
+  }
+}
+
+// Apply RTL support on page load
 window.addEventListener("load", () => {
+  applyRTLSupport();
   loadSelectedProducts();
   loadRoutine();
 });
