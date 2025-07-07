@@ -104,11 +104,15 @@ async function generateRoutine() {
     return;
   }
 
+  // Create a prompt for the AI based on selected products
   const prompt = `Create a skincare or beauty routine using the following products: ${selectedProducts
     .map((p) => `${p.name} by ${p.brand}`)
-    .join(", ")}.`;
+    .join(
+      ", "
+    )}. Format the response with line breaks and bullet points for clarity.`;
 
   try {
+    // Send the prompt to the OpenAI API
     const response = await fetch(
       "https://lorealchatbot.rbostap1.workers.dev/",
       {
@@ -123,14 +127,23 @@ async function generateRoutine() {
       }
     );
 
+    // Parse the response from the API
     const data = await response.json();
     const routine =
       data.choices[0]?.message?.content || "No routine generated.";
 
-    // Display the routine in the chat window
-    chatWindow.innerHTML = `<p>${routine}</p>`;
+    // Format the routine with line breaks for better readability
+    const formattedRoutine = routine
+      .split("\n")
+      .map((line) => `<p>${line}</p>`)
+      .join("");
+
+    // Display the formatted routine in the chatbox window
+    chatWindow.innerHTML += `<p><strong>AI:</strong></p>${formattedRoutine}`;
+    chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom of the chat window
   } catch (error) {
-    chatWindow.innerHTML = `<p>Failed to generate routine. Please try again later.</p>`;
+    // Handle errors and display a message in the chatbox
+    chatWindow.innerHTML += `<p><strong>AI:</strong> Failed to generate routine. Please try again later.</p>`;
   }
 }
 
