@@ -88,7 +88,7 @@ function toggleProductSelection(product) {
   updateProductCardSelection();
 }
 
-/* Update product cards to allow selection and show selected state */
+/* Update product cards to include info icon and tooltip */
 function displayProducts(products) {
   productsContainer.innerHTML = products
     .map(
@@ -96,7 +96,10 @@ function displayProducts(products) {
     <div class="product-card" data-id="${product.id}">
       <img src="${product.image}" alt="${product.name}">
       <div class="product-info">
-        <h3>${product.name}</h3>
+        <h3>
+          ${product.name}
+          <i class="fa-solid fa-circle-info info-icon" tabindex="0" data-description="${product.description}"></i>
+        </h3>
         <p>${product.brand}</p>
       </div>
     </div>
@@ -114,8 +117,41 @@ function displayProducts(products) {
     });
   });
 
+  // Attach hover event listeners to info icons
+  const infoIcons = document.querySelectorAll(".info-icon");
+  infoIcons.forEach((icon) => {
+    icon.addEventListener("mouseover", (e) => {
+      showTooltip(e, icon.getAttribute("data-description"));
+    });
+    icon.addEventListener("mouseout", hideTooltip);
+  });
+
   // Update the visual state of product cards
   updateProductCardSelection();
+}
+
+/* Show tooltip with product description */
+function showTooltip(event, description) {
+  // Create tooltip element
+  const tooltip = document.createElement("div");
+  tooltip.className = "custom-tooltip";
+  tooltip.textContent = description;
+
+  // Position tooltip near the hovered element
+  tooltip.style.position = "absolute";
+  tooltip.style.top = `${event.pageY + 10}px`;
+  tooltip.style.left = `${event.pageX + 10}px`;
+
+  // Add tooltip to the document
+  document.body.appendChild(tooltip);
+}
+
+/* Hide tooltip */
+function hideTooltip() {
+  const tooltip = document.querySelector(".custom-tooltip");
+  if (tooltip) {
+    tooltip.remove();
+  }
 }
 
 /* Highlight selected products in the products grid */
@@ -144,7 +180,9 @@ async function generateRoutine() {
   // Create a prompt for the AI based on selected products
   const prompt = `Create a skincare or beauty routine using the following products: ${selectedProducts
     .map((p) => `${p.name} by ${p.brand}`)
-    .join(", ")}. Format the response with HTML tags for bolding (<b>), underlining (<u>), and hyperlinks (<a href="...">). End the response with a follow-up question to engage the user.`;
+    .join(
+      ", "
+    )}. Format the response with HTML tags for bolding (<b>), underlining (<u>), and hyperlinks (<a href="...">). End the response with a follow-up question to engage the user.`;
 
   // Add the user's request to the conversation history
   conversationHistory.push({ role: "user", content: prompt });

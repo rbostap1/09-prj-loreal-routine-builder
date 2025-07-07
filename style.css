@@ -193,6 +193,94 @@ body {
   background-color: #f0f0f0;
 }
 
+/* Product card hover overlay */
+.product-card {
+  position: relative;
+  overflow: hidden; /* Ensure the overlay stays within the card */
+}
+
+.product-card .overlay {
+  position: absolute;
+  top: 100%; /* Start outside the card */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+  color: #fff; /* White text for contrast */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: top 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.product-card:hover .overlay {
+  top: 0; /* Slide the overlay into view on hover */
+}
+
+.product-card .overlay p {
+  margin: 0;
+}
+
+/* Info icon beside product name */
+.product-card .info-icon {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.product-card .info-icon:hover {
+  color: #000; /* Darker color on hover */
+}
+
+/* Tooltip styling */
+.product-card .tooltip {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 120%; /* Position below the info icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+  color: #fff; /* White text for contrast */
+  padding: 8px 12px; /* Adjusted padding for better fit */
+  border-radius: 6px;
+  font-size: 12px; /* Smaller font size for compact appearance */
+  line-height: 1.4;
+  text-align: center;
+  z-index: 10;
+  width: 200px; /* Fixed width for consistent appearance */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  white-space: normal; /* Allow text to wrap */
+}
+
+.product-card .tooltip::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing up */
+}
+
+/* Show tooltip on hover */
+.product-card .info-icon:hover + .tooltip,
+.product-card .info-icon:focus + .tooltip {
+  display: block; /* Show tooltip when hovering or focusing on the info icon */
+}
+
+/* Ensure the tooltip doesn't overflow the card */
+.product-card {
+  position: relative; /* Ensure the tooltip is positioned relative to the card */
+}
+
 /* visually hidden */
 .visually-hidden {
   position: absolute;
