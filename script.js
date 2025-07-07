@@ -261,7 +261,8 @@ chatForm.addEventListener("submit", async (e) => {
   // Add the user's message to the conversation history
   conversationHistory.push({ role: "user", content: userInput });
 
-  const prompt = `Answer only questions related to routines, L'Oréal products, or related topics. User asked: "${userInput}". End the response with a follow-up question to engage the user.`;
+  // Create a prompt for the AI to include web search in its response
+  const prompt = `Answer the user's question: "${userInput}". If relevant, search the web for L'Oréal products, routines, or related topics. Include any links or citations you find in the response. Format the response with HTML tags for bolding (<b>), underlining (<u>), hyperlinks (<a href="...">), and ensure the response is visually structured for better readability. End the response with a follow-up question to engage the user.`;
 
   try {
     const response = await fetch(
@@ -281,8 +282,14 @@ chatForm.addEventListener("submit", async (e) => {
     const data = await response.json();
     const reply = data.choices[0]?.message?.content || "I cannot answer that.";
 
+    // Format the AI's reply for better readability
+    const formattedReply = reply
+      .split("\n")
+      .map((line) => `<p>${line.trim()}</p>`)
+      .join("");
+
     // Display the AI's reply in a chat bubble
-    chatWindow.innerHTML += `<p class="ai-message">${reply}</p>`;
+    chatWindow.innerHTML += `<div class="ai-message">${formattedReply}</div>`;
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
     // Add the AI's reply to the conversation history
@@ -306,6 +313,59 @@ categoryFilter.addEventListener("change", async (e) => {
   );
 
   displayProducts(filteredProducts);
+});
+
+/* Add search functionality for products */
+const searchInput = document.getElementById("productSearch");
+
+searchInput.addEventListener("input", async (e) => {
+  const searchTerm = e.target.value.toLowerCase().trim();
+
+  // Load all products
+  const products = await loadProducts();
+
+  // Filter products by name or category matching the search term
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchTerm) ||
+      product.category.toLowerCase().includes(searchTerm)
+  );
+
+  // Display the filtered products if there's a search term
+  if (searchTerm) {
+    displayProducts(filteredProducts);
+  } else {
+    productsContainer.innerHTML = `
+      <div class="placeholder-message">
+        Select a category or search for products
+      </div>
+    `;
+  }
+});
+
+// Hide product list when search field is not focused and empty
+searchInput.addEventListener("blur", () => {
+  if (!searchInput.value.trim()) {
+    productsContainer.innerHTML = `
+      <div class="placeholder-message">
+        Select a category or search for products
+      </div>
+    `;
+  }
+});
+
+// Show product list when search field is focused and has a value
+searchInput.addEventListener("focus", async () => {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  if (searchTerm) {
+    const products = await loadProducts();
+    const filteredProducts = products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.category.toLowerCase().includes(searchTerm)
+    );
+    displayProducts(filteredProducts);
+  }
 });
 
 /* Load user preferences on page load */
