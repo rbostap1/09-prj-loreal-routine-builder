@@ -100,7 +100,7 @@ function updateProductCardSelection() {
 /* Generate routine using OpenAI API */
 async function generateRoutine() {
   if (selectedProducts.length === 0) {
-    chatWindow.innerHTML = `<p>Please select products to generate a routine.</p>`;
+    chatWindow.innerHTML += `<p class="ai-message">Please select products to generate a routine.</p>`;
     return;
   }
 
@@ -112,6 +112,9 @@ async function generateRoutine() {
     )}. Format the response with line breaks and bullet points for clarity.`;
 
   try {
+    // Display the user's request in a chat bubble
+    chatWindow.innerHTML += `<p class="user-message">Generate a routine for the selected products.</p>`;
+
     // Send the prompt to the OpenAI API
     const response = await fetch(
       "https://lorealchatbot.rbostap1.workers.dev/",
@@ -129,8 +132,10 @@ async function generateRoutine() {
 
     // Parse the response from the API
     const data = await response.json();
-    const routine =
-      data.choices[0]?.message?.content || "No routine generated.";
+    let routine = data.choices[0]?.message?.content || "No routine generated.";
+
+    // Normalize excessive line breaks to one or two
+    routine = routine.replace(/\n{3,}/g, "\n\n");
 
     // Format the routine with line breaks for better readability
     const formattedRoutine = routine
@@ -138,12 +143,12 @@ async function generateRoutine() {
       .map((line) => `<p>${line}</p>`)
       .join("");
 
-    // Display the formatted routine in the chatbox window
-    chatWindow.innerHTML += `<p><strong>AI:</strong></p>${formattedRoutine}`;
+    // Display the AI's response in a chat bubble
+    chatWindow.innerHTML += `<div class="ai-message">${formattedRoutine}</div>`;
     chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom of the chat window
   } catch (error) {
     // Handle errors and display a message in the chatbox
-    chatWindow.innerHTML += `<p><strong>AI:</strong> Failed to generate routine. Please try again later.</p>`;
+    chatWindow.innerHTML += `<p class="ai-message">Failed to generate routine. Please try again later.</p>`;
   }
 }
 
@@ -156,6 +161,9 @@ chatForm.addEventListener("submit", async (e) => {
 
   const userInput = document.getElementById("userInput").value.trim();
   if (!userInput) return;
+
+  // Display the user's message in a chat bubble
+  chatWindow.innerHTML += `<p class="user-message">${userInput}</p>`;
 
   const prompt = `Answer only questions related to routines, L'Oréal products, or related topics. User asked: "${userInput}"`;
 
@@ -177,12 +185,11 @@ chatForm.addEventListener("submit", async (e) => {
     const data = await response.json();
     const reply = data.choices[0]?.message?.content || "I cannot answer that.";
 
-    // Display the reply in the chat window
-    chatWindow.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
-    chatWindow.innerHTML += `<p><strong>Bot:</strong> ${reply}</p>`;
+    // Display the AI's reply in a chat bubble
+    chatWindow.innerHTML += `<p class="ai-message">${reply}</p>`;
     chatWindow.scrollTop = chatWindow.scrollHeight;
   } catch (error) {
-    chatWindow.innerHTML += `<p><strong>Bot:</strong> Failed to fetch a response. Please try again later.</p>`;
+    chatWindow.innerHTML += `<p class="ai-message">Failed to fetch a response. Please try again later.</p>`;
   }
 
   chatForm.reset();

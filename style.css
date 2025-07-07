@@ -79,6 +79,53 @@ body {
   overflow-y: auto;
   background: #fafafa;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Chat bubbles with updated transparency */
+.chat-window p {
+  max-width: 75%;
+  padding: 14px 18px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  word-wrap: break-word;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.chat-window .user-message {
+  background-color: rgba(
+    173,
+    216,
+    230,
+    0.5
+  ); /* Light blue with 50% transparency */
+  color: #333; /* Dark text for readability */
+  border: 1px solid rgba(173, 216, 230, 0.8); /* Slightly darker border for definition */
+  align-self: flex-end;
+  text-align: right;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.chat-window .ai-message {
+  background-color: rgba(128, 128, 128, 0.1); /* Grey with 10% transparency */
+  color: #000; /* Black text for contrast */
+  border: 1px solid rgba(128, 128, 128, 0.3); /* Slightly darker border for definition */
+  align-self: flex-start;
+  text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
+  border-radius: 25px; /* Rounded corners for the AI bubble */
+}
+
+/* Add spacing between chat bubbles and edges */
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
 }
 
 /* placeholder message */
