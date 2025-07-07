@@ -23,6 +23,37 @@ async function loadProducts() {
 /* Array to store selected products */
 let selectedProducts = [];
 
+/* Save selected products to localStorage */
+function saveSelectedProducts() {
+  localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+}
+
+/* Load selected products from localStorage */
+function loadSelectedProducts() {
+  const savedProducts = localStorage.getItem("selectedProducts");
+  if (savedProducts) {
+    selectedProducts = JSON.parse(savedProducts);
+
+    // Update the selected products list in the DOM
+    selectedProductsList.innerHTML = selectedProducts
+      .map(
+        (p) => `
+      <div class="product-card">
+        <img src="${p.image}" alt="${p.name}">
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p>${p.brand}</p>
+        </div>
+      </div>
+    `
+      )
+      .join("");
+
+    // Update the visual state of product cards
+    updateProductCardSelection();
+  }
+}
+
 /* Add or remove product from the selected products area */
 function toggleProductSelection(product) {
   const productIndex = selectedProducts.findIndex((p) => p.id === product.id);
@@ -35,18 +66,21 @@ function toggleProductSelection(product) {
     selectedProducts.splice(productIndex, 1);
   }
 
+  // Save updated selected products to localStorage
+  saveSelectedProducts();
+
   // Update the selected products list in the DOM
   selectedProductsList.innerHTML = selectedProducts
     .map(
       (p) => `
-    <div class="product-card">
-      <img src="${p.image}" alt="${p.name}">
-      <div class="product-info">
-        <h3>${p.name}</h3>
-        <p>${p.brand}</p>
+      <div class="product-card">
+        <img src="${p.image}" alt="${p.name}">
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p>${p.brand}</p>
+        </div>
       </div>
-    </div>
-  `
+    `
     )
     .join("");
 
@@ -97,6 +131,9 @@ function updateProductCardSelection() {
   });
 }
 
+/* Array to store conversation history */
+let conversationHistory = [];
+
 /* Generate routine using OpenAI API */
 async function generateRoutine() {
   if (selectedProducts.length === 0) {
@@ -107,15 +144,16 @@ async function generateRoutine() {
   // Create a prompt for the AI based on selected products
   const prompt = `Create a skincare or beauty routine using the following products: ${selectedProducts
     .map((p) => `${p.name} by ${p.brand}`)
-    .join(
-      ", "
-    )}. Format the response with line breaks and bullet points for clarity.`;
+    .join(", ")}. Format the response with HTML tags for bolding (<b>), underlining (<u>), and hyperlinks (<a href="...">). End the response with a follow-up question to engage the user.`;
+
+  // Add the user's request to the conversation history
+  conversationHistory.push({ role: "user", content: prompt });
 
   try {
     // Display the user's request in a chat bubble
     chatWindow.innerHTML += `<p class="user-message">Generate a routine for the selected products.</p>`;
 
-    // Send the prompt to the OpenAI API
+    // Send the conversation history to the OpenAI API
     const response = await fetch(
       "https://lorealchatbot.rbostap1.workers.dev/",
       {
@@ -125,29 +163,46 @@ async function generateRoutine() {
         },
         body: JSON.stringify({
           model: "gpt-4o",
-          messages: [{ role: "user", content: prompt }],
+          messages: conversationHistory,
         }),
       }
     );
 
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
     // Parse the response from the API
     const data = await response.json();
-    let routine = data.choices[0]?.message?.content || "No routine generated.";
 
-    // Normalize excessive line breaks to one or two
-    routine = routine.replace(/\n{3,}/g, "\n\n");
+    // Check if the response contains the expected data
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      throw new Error("Invalid response format from API");
+    }
+
+    let routine = data.choices[0].message.content;
+
+    // Normalize excessive line breaks to a single line break
+    routine = routine.replace(/\n{2,}/g, "\n");
 
     // Format the routine with line breaks for better readability
     const formattedRoutine = routine
       .split("\n")
-      .map((line) => `<p>${line}</p>`)
+      .map((line) => `<p>${line.trim()}</p>`)
       .join("");
 
     // Display the AI's response in a chat bubble
     chatWindow.innerHTML += `<div class="ai-message">${formattedRoutine}</div>`;
-    chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom of the chat window
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Add the AI's response to the conversation history
+    conversationHistory.push({ role: "assistant", content: routine });
   } catch (error) {
-    // Handle errors and display a message in the chatbox
+    // Log the error to the console for debugging
+    console.error("Error generating routine:", error);
+
+    // Display an error message in the chatbox
     chatWindow.innerHTML += `<p class="ai-message">Failed to generate routine. Please try again later.</p>`;
   }
 }
@@ -165,7 +220,10 @@ chatForm.addEventListener("submit", async (e) => {
   // Display the user's message in a chat bubble
   chatWindow.innerHTML += `<p class="user-message">${userInput}</p>`;
 
-  const prompt = `Answer only questions related to routines, L'Oréal products, or related topics. User asked: "${userInput}"`;
+  // Add the user's message to the conversation history
+  conversationHistory.push({ role: "user", content: userInput });
+
+  const prompt = `Answer only questions related to routines, L'Oréal products, or related topics. User asked: "${userInput}". End the response with a follow-up question to engage the user.`;
 
   try {
     const response = await fetch(
@@ -177,7 +235,7 @@ chatForm.addEventListener("submit", async (e) => {
         },
         body: JSON.stringify({
           model: "gpt-4o",
-          messages: [{ role: "user", content: prompt }],
+          messages: conversationHistory,
         }),
       }
     );
@@ -188,6 +246,9 @@ chatForm.addEventListener("submit", async (e) => {
     // Display the AI's reply in a chat bubble
     chatWindow.innerHTML += `<p class="ai-message">${reply}</p>`;
     chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Add the AI's reply to the conversation history
+    conversationHistory.push({ role: "assistant", content: reply });
   } catch (error) {
     chatWindow.innerHTML += `<p class="ai-message">Failed to fetch a response. Please try again later.</p>`;
   }
@@ -207,4 +268,10 @@ categoryFilter.addEventListener("change", async (e) => {
   );
 
   displayProducts(filteredProducts);
+});
+
+/* Load user preferences on page load */
+window.addEventListener("load", () => {
+  loadSelectedProducts();
+  loadRoutine();
 });
