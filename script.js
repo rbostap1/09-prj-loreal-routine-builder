@@ -3,6 +3,8 @@ const categoryFilter = document.getElementById("categoryFilter");
 const productsContainer = document.getElementById("productsContainer");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
+const selectedProductsList = document.getElementById("selectedProductsList");
+const generateRoutineBtn = document.getElementById("generateRoutine");
 
 /* Show initial placeholder until user selects a category */
 productsContainer.innerHTML = `
@@ -18,12 +20,46 @@ async function loadProducts() {
   return data.products;
 }
 
-/* Create HTML for displaying product cards */
+/* Array to store selected products */
+let selectedProducts = [];
+
+/* Add or remove product from the selected products area */
+function toggleProductSelection(product) {
+  const productIndex = selectedProducts.findIndex((p) => p.id === product.id);
+
+  if (productIndex === -1) {
+    // Add product if not already selected
+    selectedProducts.push(product);
+  } else {
+    // Remove product if already selected
+    selectedProducts.splice(productIndex, 1);
+  }
+
+  // Update the selected products list in the DOM
+  selectedProductsList.innerHTML = selectedProducts
+    .map(
+      (p) => `
+    <div class="product-card">
+      <img src="${p.image}" alt="${p.name}">
+      <div class="product-info">
+        <h3>${p.name}</h3>
+        <p>${p.brand}</p>
+      </div>
+    </div>
+  `
+    )
+    .join("");
+
+  // Update the visual state of product cards
+  updateProductCardSelection();
+}
+
+/* Update product cards to allow selection and show selected state */
 function displayProducts(products) {
   productsContainer.innerHTML = products
     .map(
       (product) => `
-    <div class="product-card">
+    <div class="product-card" data-id="${product.id}">
       <img src="${product.image}" alt="${product.name}">
       <div class="product-info">
         <h3>${product.name}</h3>
@@ -33,7 +69,111 @@ function displayProducts(products) {
   `
     )
     .join("");
+
+  // Attach click event listeners to product cards
+  const productCards = document.querySelectorAll(".product-card");
+  productCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const productId = parseInt(card.getAttribute("data-id"));
+      const product = products.find((p) => p.id === productId);
+      toggleProductSelection(product);
+    });
+  });
+
+  // Update the visual state of product cards
+  updateProductCardSelection();
 }
+
+/* Highlight selected products in the products grid */
+function updateProductCardSelection() {
+  const productCards = document.querySelectorAll(".product-card");
+  productCards.forEach((card) => {
+    const productId = parseInt(card.getAttribute("data-id"));
+    if (selectedProducts.some((p) => p.id === productId)) {
+      card.classList.add("selected");
+    } else {
+      card.classList.remove("selected");
+    }
+  });
+}
+
+/* Generate routine using OpenAI API */
+async function generateRoutine() {
+  if (selectedProducts.length === 0) {
+    chatWindow.innerHTML = `<p>Please select products to generate a routine.</p>`;
+    return;
+  }
+
+  const prompt = `Create a skincare or beauty routine using the following products: ${selectedProducts
+    .map((p) => `${p.name} by ${p.brand}`)
+    .join(", ")}.`;
+
+  try {
+    const response = await fetch(
+      "https://lorealchatbot.rbostap1.workers.dev/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    const routine =
+      data.choices[0]?.message?.content || "No routine generated.";
+
+    // Display the routine in the chat window
+    chatWindow.innerHTML = `<p>${routine}</p>`;
+  } catch (error) {
+    chatWindow.innerHTML = `<p>Failed to generate routine. Please try again later.</p>`;
+  }
+}
+
+/* Handle routine generation button click */
+generateRoutineBtn.addEventListener("click", generateRoutine);
+
+/* Chat form submission handler */
+chatForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const userInput = document.getElementById("userInput").value.trim();
+  if (!userInput) return;
+
+  const prompt = `Answer only questions related to routines, L'Oréal products, or related topics. User asked: "${userInput}"`;
+
+  try {
+    const response = await fetch(
+      "https://lorealchatbot.rbostap1.workers.dev/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    const reply = data.choices[0]?.message?.content || "I cannot answer that.";
+
+    // Display the reply in the chat window
+    chatWindow.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+    chatWindow.innerHTML += `<p><strong>Bot:</strong> ${reply}</p>`;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  } catch (error) {
+    chatWindow.innerHTML += `<p><strong>Bot:</strong> Failed to fetch a response. Please try again later.</p>`;
+  }
+
+  chatForm.reset();
+});
 
 /* Filter and display products when category changes */
 categoryFilter.addEventListener("change", async (e) => {
@@ -47,11 +187,4 @@ categoryFilter.addEventListener("change", async (e) => {
   );
 
   displayProducts(filteredProducts);
-});
-
-/* Chat form submission handler - placeholder for OpenAI integration */
-chatForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  chatWindow.innerHTML = "Connect to the OpenAI API for a response!";
 });

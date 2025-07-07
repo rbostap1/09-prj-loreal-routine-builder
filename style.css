@@ -135,6 +135,12 @@ body {
   outline-offset: 2px;
 }
 
+/* Highlight selected product cards */
+.product-card.selected {
+  border: 2px solid #000;
+  background-color: #f0f0f0;
+}
+
 /* visually hidden */
 .visually-hidden {
   position: absolute;
