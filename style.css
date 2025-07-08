@@ -454,3 +454,12 @@ body {
   margin-right: 8px; /* Adjust spacing for RTL */
   margin-left: 0;
 }
+
+/* Typing indicator styling */
+.ai-typing-indicator {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+  align-self: flex-start;
+}

@@ -191,6 +191,12 @@ async function generateRoutine() {
     // Display the user's request in a chat bubble
     chatWindow.innerHTML += `<p class="user-message">Generate a routine for the selected products.</p>`;
 
+    // Scroll to the latest message
+    scrollToLatestMessage();
+
+    // Show typing indicator
+    showTypingIndicator();
+
     // Send the conversation history to the OpenAI API
     const response = await fetch(
       "https://lorealchatbot.rbostap1.workers.dev/",
@@ -214,6 +220,9 @@ async function generateRoutine() {
     // Parse the response from the API
     const data = await response.json();
 
+    // Remove typing indicator
+    removeTypingIndicator();
+
     // Check if the response contains the expected data
     if (!data.choices || !data.choices[0]?.message?.content) {
       throw new Error("Invalid response format from API");
@@ -232,22 +241,43 @@ async function generateRoutine() {
 
     // Display the AI's response in a chat bubble
     chatWindow.innerHTML += `<div class="ai-message">${formattedRoutine}</div>`;
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+    scrollToLatestMessage();
 
     // Add the AI's response to the conversation history
     conversationHistory.push({ role: "assistant", content: routine });
   } catch (error) {
+    // Remove typing indicator
+    removeTypingIndicator();
+
     // Log the error to the console for debugging
     console.error("Error generating routine:", error);
 
     // Display an error message in the chatbox
     chatWindow.innerHTML += `<p class="ai-message">Failed to generate routine. Please try again later.</p>`;
+    scrollToLatestMessage();
   }
 }
 
 /* Scroll chat window to the latest message */
 function scrollToLatestMessage() {
   chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+/* Show typing indicator */
+function showTypingIndicator() {
+  const typingIndicator = document.createElement("p");
+  typingIndicator.className = "ai-typing-indicator";
+  typingIndicator.textContent = "The AI is working on a response...";
+  chatWindow.appendChild(typingIndicator);
+  scrollToLatestMessage();
+}
+
+/* Remove typing indicator */
+function removeTypingIndicator() {
+  const typingIndicator = document.querySelector(".ai-typing-indicator");
+  if (typingIndicator) {
+    typingIndicator.remove();
+  }
 }
 
 /* Handle routine generation button click */
@@ -260,7 +290,7 @@ chatForm.addEventListener("submit", async (e) => {
   const userInput = document.getElementById("userInput").value.trim();
   if (!userInput) return;
 
-  // Display the user's message in a chat bubble with animation
+  // Display the user's message in a chat bubble
   chatWindow.innerHTML += `<p class="user-message">${userInput}</p>`;
 
   // Add the user's message to the conversation history
@@ -271,6 +301,9 @@ chatForm.addEventListener("submit", async (e) => {
 
   // Scroll to the latest message
   scrollToLatestMessage();
+
+  // Show typing indicator
+  showTypingIndicator();
 
   // Create a prompt for the AI to include web search in its response
   const prompt = `Answer the user's question: "${userInput}". If relevant, search the web for L'Oréal products, routines, or related topics. Include any links or citations you find in the response. Format the response with HTML tags for bolding (<b>), underlining (<u>), hyperlinks (<a href="...">), and ensure the response is visually structured for better readability. End the response with a follow-up question to engage the user.`;
@@ -293,13 +326,16 @@ chatForm.addEventListener("submit", async (e) => {
     const data = await response.json();
     const reply = data.choices[0]?.message?.content || "I cannot answer that.";
 
+    // Remove typing indicator
+    removeTypingIndicator();
+
     // Format the AI's reply for better readability
     const formattedReply = reply
       .split("\n")
       .map((line) => `<p>${line.trim()}</p>`)
       .join("");
 
-    // Display the AI's reply in a chat bubble with animation
+    // Display the AI's reply in a chat bubble
     chatWindow.innerHTML += `<div class="ai-message">${formattedReply}</div>`;
 
     // Scroll to the latest message
@@ -308,6 +344,9 @@ chatForm.addEventListener("submit", async (e) => {
     // Add the AI's reply to the conversation history
     conversationHistory.push({ role: "assistant", content: reply });
   } catch (error) {
+    // Remove typing indicator
+    removeTypingIndicator();
+
     chatWindow.innerHTML += `<p class="ai-message">Failed to fetch a response. Please try again later.</p>`;
     scrollToLatestMessage();
   }
