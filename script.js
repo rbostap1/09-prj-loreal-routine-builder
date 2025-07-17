@@ -306,7 +306,7 @@ chatForm.addEventListener("submit", async (e) => {
   showTypingIndicator();
 
   // Create a prompt for the AI to include web search in its response
-  const prompt = `Answer the user's question: "${userInput}". If relevant, search the web for L'Oréal products, routines, or related topics. Include any links or citations you find in the response. Format the response with HTML tags for bolding (<b>), underlining (<u>), hyperlinks (<a href="...">), and ensure the response is visually structured for better readability. End the response with a follow-up question to engage the user.`;
+  const prompt = `Answer the user's question only if it is related to L'Oréal products, routines, or L'Oréal related: "${userInput}". Include any links or citations you find in the response. Refuse to answer if the question is not related to L'Oréal products, state "I am only able to assist with L'Oréal related topic. Is there anything I am assist you with?. Use bold text where appropriate, and end with a follow-up question to engage the user. Use paragraph tags (<p>) for formatting.`;
 
   try {
     const response = await fetch(
